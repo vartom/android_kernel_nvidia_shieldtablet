@@ -191,6 +191,7 @@ static int tegra_rt5677_fe_pcm_startup(struct snd_pcm_substream *substream)
 	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(rtd->card);
 
 	tegra30_ahub_enable_clocks();
+
 	tegra30_ahub_allocate_tx_fifo(
 		&machine->playback_fifo_cif,
 		&machine->playback_dma_data.addr,
