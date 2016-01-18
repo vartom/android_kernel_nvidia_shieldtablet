@@ -22,6 +22,19 @@ OBJCOPYFLAGS	:=-O binary -R .comment -S
 GZFLAGS		:=-9
 #KBUILD_CFLAGS	+=-pipe
 
+O2_FLAGS := \
+	-fgraphite \
+	-ftree-partial-pre \
+	-fgcse-after-reload \
+	-fgraphite-identity \
+	-floop-nest-optimize \
+	-fpredictive-commoning \
+
+O1_FLAGS := \
+	-mtune=cortex-a15 
+
+KBUILD_CFLAGS	+= -fno-pic $(O1_FLAGS) $(O2_FLAGS)
+
 # Never generate .eh_frame
 KBUILD_CFLAGS	+= $(call cc-option,-fno-dwarf2-cfi-asm)
 
@@ -260,6 +273,7 @@ core-y				+= arch/arm/kernel/ arch/arm/mm/ arch/arm/common/
 core-y				+= arch/arm/net/
 core-y				+= arch/arm/crypto/
 core-y				+= $(machdirs) $(platdirs)
+core-$(CONFIG_INTELLI_PLUG)	+= arch/arm/hotplug/
 
 drivers-$(CONFIG_OPROFILE)      += arch/arm/oprofile/
 
