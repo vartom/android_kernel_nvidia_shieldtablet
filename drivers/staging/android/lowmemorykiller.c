@@ -88,16 +88,16 @@ static bool protected(char *comm)
 
 static int test_task_flag(struct task_struct *p, int flag)
 {
-	struct task_struct *t = p;
+	struct task_struct *t;
 
-	do {
+	for_each_thread(p, t) {
 		task_lock(t);
 		if (test_tsk_thread_flag(t, flag)) {
 			task_unlock(t);
 			return 1;
 		}
 		task_unlock(t);
-	} while_each_thread(p, t);
+	}
 
 	return 0;
 }
@@ -137,8 +137,8 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	}
 
 	other_free = global_page_state(NR_FREE_PAGES) -
-			 global_page_state(NR_FREE_CMA_PAGES)
-			 + swap_info.freeswap
+			 global_page_state(NR_FREE_CMA_PAGES) -
+			 totalreserve_pages
 #ifdef CONFIG_TEGRA_NVMAP
 			 + nvmap_page_pool_get_unused_pages()
 #endif
@@ -224,11 +224,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			continue;
 		}
 		if (protected(p->comm)) {
-			task_unlock(p);
-			continue;
-		}
-		/* this bypasses all low memory calculations. */
-		if (swap_info.freeswap > total_swap_pages/10) {
 			task_unlock(p);
 			continue;
 		}
