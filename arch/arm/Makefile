@@ -20,18 +20,11 @@ endif
 
 OBJCOPYFLAGS	:=-O binary -R .comment -S
 GZFLAGS		:=-9
-#KBUILD_CFLAGS	+=-pipe
+KBUILD_CFLAGS	+= -O2 -pipe
 
-O2_FLAGS := \
-	-fgraphite \
-	-ftree-partial-pre \
-	-fgcse-after-reload \
-	-fgraphite-identity \
-	-floop-nest-optimize \
-	-fpredictive-commoning \
-
-O1_FLAGS := \
-	-mtune=cortex-a15 
+#O2_FLAGS := -fgraphite -ftree-partial-pre -fgcse-after-reload -fgraphite-identity -floop-nest-optimize -fpredictive-commoning 
+O2_FLAGS := -fgraphite-identity -floop-block -floop-interchange -floop-parallelize-all -floop-strip-mine -ftree-loop-distribution
+O1_FLAGS := -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=2048 --param l1-cache-line-size=32 
 
 KBUILD_CFLAGS	+= -fno-pic $(O1_FLAGS) $(O2_FLAGS)
 
