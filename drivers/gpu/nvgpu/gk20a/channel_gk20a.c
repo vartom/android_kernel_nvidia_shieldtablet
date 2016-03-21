@@ -620,7 +620,13 @@ static int gk20a_init_error_notifier(struct channel_gk20a *ch,
 	struct device *dev = dev_from_gk20a(ch->g);
 	struct dma_buf *dmabuf;
 	void *va;
-	u64 end = args->offset + sizeof(struct nvgpu_notification);
+	u64 end;
+
+	if (unlikely(args->offset >
+		     U64_MAX - sizeof(struct nvhost_notification)))
+		return -EINVAL;
+
+	end = args->offset + sizeof(struct nvhost_notification);
 
 	if (!args->mem) {
 		pr_err("gk20a_init_error_notifier: invalid memory handle\n");
@@ -2090,6 +2096,10 @@ static int gk20a_channel_wait(struct channel_gk20a *ch,
 	case NVGPU_WAIT_TYPE_NOTIFIER:
 		id = args->condition.notifier.dmabuf_fd;
 		offset = args->condition.notifier.offset;
+
+		if (unlikely(offset > U32_MAX - sizeof(struct notification)))
+			return -EINVAL;
+
 		end = offset + sizeof(struct notification);
 
 		dmabuf = dma_buf_get(id);
