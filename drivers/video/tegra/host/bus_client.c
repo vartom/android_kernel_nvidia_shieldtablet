@@ -421,9 +421,15 @@ static int nvhost_channelopen(struct inode *inode, struct file *filp)
 static int nvhost_init_error_notifier(struct nvhost_channel_userctx *ctx,
 				      struct nvhost_set_error_notifier *args)
 {
-	struct dma_buf *dmabuf;
 	void *va;
-	u64 end = args->offset + sizeof(struct nvhost_notification);
+	u64 end;
+	struct dma_buf *dmabuf;
+
+	if (unlikely(args->offset >
+		     U64_MAX - sizeof(struct nvhost_notification)))
+		return -EINVAL;
+
+	end = args->offset + sizeof(struct nvhost_notification);
 
 	/* are we releasing old reference? */
 	if (!args->mem) {
