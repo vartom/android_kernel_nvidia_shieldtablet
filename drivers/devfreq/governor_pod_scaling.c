@@ -436,7 +436,6 @@ static void podgov_idle_handler(struct work_struct *work)
 	mutex_unlock(&df->lock);
 }
 
-#ifdef CONFIG_TEGRA_THROUGHPUT
 /*******************************************************************************
  * freqlist_down(podgov, target, steps)
  *
@@ -457,6 +456,7 @@ static int freqlist_down(struct podgov_info_rec *podgov, unsigned long target,
 	return podgov->freqlist[pos];
 }
 
+#ifdef CONFIG_TEGRA_THROUGHPUT
 /*******************************************************************************
  * nvhost_scale_emc_set_throughput_hint(hint)
  *

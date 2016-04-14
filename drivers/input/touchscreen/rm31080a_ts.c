@@ -69,7 +69,7 @@
 /*=============================================================================
 	DEFINITIONS
 =============================================================================*/
-#define MAX_SPI_FREQ_HZ			50000000
+#define MAX_SPI_FREQ_HZ			25000000
 #define TS_PEN_UP_TIMEOUT		msecs_to_jiffies(50)
 
 #define QUEUE_COUNT					128
@@ -1907,7 +1907,7 @@ static void *rm_tch_enqueue_start(void)
 
 	if (g_service_busy_report_count < 0) {
 		g_service_busy_report_count = 100;
-		rm_printk("Raydium - touch service is busy,try again.\n");
+		/*rm_printk("Raydium - touch service is busy,try again.\n");*/
 	} else {
 		g_service_busy_report_count--;
 	}
@@ -2532,10 +2532,10 @@ static ssize_t rm_tch_testmode_handler(const char *buf, size_t count)
 		}
 		}
 	}
-	rm_printk("Raydium - rm_kernel_test_mode:%s,Type:%d,Para:%d",
+	/*rm_printk("Raydium - rm_kernel_test_mode:%s,Type:%d,Para:%d",
 		g_st_ts.u8_test_mode ?
 		"Enabled" : "Disabled",
-		g_st_ts.u8_test_mode_type, (u8)val);
+		g_st_ts.u8_test_mode_type, (u8)val);*/
 			return ret;
 }
 
@@ -2624,7 +2624,7 @@ static ssize_t selftest_enable_set(struct device *dev,
 	struct device_attribute *attr,
 	const char *buf, size_t count)
 {
-	rm_printk("enter test mode buf[0] = %d\n", buf[0]);
+	/*rm_printk("enter test mode buf[0] = %d\n", buf[0]);*/
 	rm_tch_enter_test_mode(buf[0]);
 	return count;
 }
@@ -3267,7 +3267,7 @@ static int rm_tch_suspend(struct device *dev)
 {
 	struct rm_tch_ts *ts = dev_get_drvdata(dev);
 	if (g_st_ts.b_init_service) {
-		dev_info(ts->dev, "Raydium - Disable input device\n");
+		/*dev_info(ts->dev, "Raydium - Disable input device\n");*/
 		rm_ctrl_suspend(ts);
 		dev_info(ts->dev, "Raydium - Disable input device done\n");
 	}
@@ -3352,7 +3352,7 @@ void raydium_tlk_ns_touch_suspend(void)
 {
 	struct rm_tch_ts *ts = input_get_drvdata(g_input_dev);
 
-	rm_printk("tlk_ns_touch_suspend\n");
+	/*rm_printk("tlk_ns_touch_suspend\n");*/
 
 	rm_tch_enter_manual_mode();
 	mutex_lock(&g_st_ts.mutex_scan_mode);
@@ -3366,7 +3366,7 @@ void raydium_tlk_ns_touch_resume(void)
 {
 	struct rm_tch_ts *ts = input_get_drvdata(g_input_dev);
 
-	rm_printk("tlk_ns_touch_resume\n");
+	/*rm_printk("tlk_ns_touch_resume\n");*/
 
 	rm_tch_ts_send_signal(g_st_ts.u32_hal_pid, 0x03);
 	rm_tch_cmd_process(1, g_st_rm_tlk_cmd, ts);
@@ -3626,7 +3626,7 @@ dev_read(struct file *filp, char __user *buf, size_t count, loff_t *pos)
 
 	if (ret) {
 		status = -EFAULT;
-		rm_printk("Raydium - rm_tch_spi_read() fail\n");
+		/*rm_printk("Raydium - rm_tch_spi_read() fail\n");*/
 	} else {
 		status = count;
 		missing = copy_to_user(buf, p_u8_my_buf, count);
@@ -3792,7 +3792,7 @@ static long dev_ioctl(struct file *file,
 				rm_printk("Raydium - Event poster is alive!\n");
 		}
 #endif
-		rm_printk("Raydium - Enable input device done\n");
+		/*rm_printk("Raydium - Enable input device done\n");*/
 		break;
 	case RM_IOCTL_SCRIBER_CTRL:
 		g_st_ts.b_enable_scriber = (bool) arg;
@@ -3819,7 +3819,7 @@ static long dev_ioctl(struct file *file,
 		g_st_ts.b_init_service = true;
 		break;
 	case RM_IOCTL_SET_CLK:
-		rm_printk("Raydium - Clock set to %d\n", (u32)arg);
+		/*rm_printk("Raydium - Clock set to %d\n", (u32)arg);*/
 		if (ts && ts->clk) {
 			if ((u32)arg)
 				ret = clk_enable(ts->clk);
@@ -3966,6 +3966,7 @@ static int rm_tch_regulator_init(struct rm_tch_ts *ts)
 				__func__);
 
 	error = regulator_enable(ts->regulator_1v8);
+
 	if (error) {
 		dev_err(&g_spi->dev,
 			"Raydium - 1.8V regulator enable failed: %d\n", error);
@@ -3978,6 +3979,7 @@ static int rm_tch_regulator_init(struct rm_tch_ts *ts)
 		rm_printk("Raydium - %s : 3.3V regulator is already enabled!\n",
 				__func__);
 	error = regulator_enable(ts->regulator_3v3);
+
 	if (error) {
 		dev_err(&g_spi->dev,
 			"Raydium - regulator enable failed: %d\n", error);
@@ -4079,7 +4081,7 @@ static int rm_tch_spi_probe(struct spi_device *spi)
 	init_ts_timer();
 	add_timer(&ts_timer_triggle);
 
-	rm_printk("Raydium - Spi Probe Done!!\n");
+	/*rm_printk("Raydium - Spi Probe Done!!\n");*/
 	return RETURN_OK;
 
 err_queue_init:
