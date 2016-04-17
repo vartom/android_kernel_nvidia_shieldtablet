@@ -471,7 +471,6 @@ static void __dma_remap(struct page *page, size_t size, pgprot_t prot)
 	apply_to_page_range(&init_mm, start, size, __dma_update_pte, &prot);
 	dsb();
 	flush_tlb_kernel_range(start, end);
-	}
 }
 
 static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
