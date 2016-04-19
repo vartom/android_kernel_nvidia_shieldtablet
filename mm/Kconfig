@@ -479,6 +479,13 @@ config FRONTSWAP
 
 	  If unsure, say Y to enable frontswap.
 
+config ZPOOL
+	tristate "Common API for compressed memory storage"
+	default n
+	help
+	  Compressed memory storage API.  This allows using either zbud or
+	  zsmalloc.
+
 config ZSMALLOC
 	bool "Memory allocator for compressed pages"
 	depends on MMU
@@ -504,19 +511,12 @@ config PGTABLE_MAPPING
 	  You can check speed with zsmalloc benchmark:
 	  https://github.com/spartacus06/zsmapbench
 
-config GENERIC_EARLY_IOREMAP
-	bool
-
-if STAGING
-config HMM
-	bool "Enable heterogeneous memory management (HMM)"
-	depends on MMU
-	select MMU_NOTIFIER
-	default n
+config ZSMALLOC_STAT
+	bool "Export zsmalloc statistics"
+	depends on ZSMALLOC
+	select DEBUG_FS
 	help
-	  Heterogeneous memory management provide infrastructure for a device
-	  to mirror a process address space into an hardware mmu or into any
-	  things supporting pagefault like event.
-
-	  If unsure, say N to disable hmm.
-endif # STAGING
+	  This option enables code in the zsmalloc to collect various
+	  statistics about whats happening in zsmalloc and exports that
+	  information to userspace via debugfs.
+	  If unsure, say N.
