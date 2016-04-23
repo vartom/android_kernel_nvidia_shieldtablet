@@ -622,7 +622,7 @@ struct gk20a_domain_data {
 
 #ifdef CONFIG_DEBUG_FS
     /* debug info, default is compiled-in but effectively disabled (0 mask) */
-    #define GK20A_DEBUG
+    // #define GK20A_DEBUG
     /*e.g: echo 1 > /d/gk20a.0/dbg_mask */
     #define GK20A_DEFAULT_DBG_MASK 0
 #else
