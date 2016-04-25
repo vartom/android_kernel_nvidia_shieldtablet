@@ -374,15 +374,15 @@ static int virtual_device_sanity_check(
 	}
 	dev_dbg(dev, "regulator name size: %d\n", *len);
 
-	if (dev_info->pwr_on_size > VIRTUAL_DEV_MAX_POWER_SIZE) {
+	if (pvd->pwr_on_size > VIRTUAL_DEV_MAX_POWER_SIZE) {
 		dev_err(dev, "%s power on function size too big %d!\n",
-		__func__, dev_info->pwr_on_size);
+		__func__, pvd->pwr_on_size);
 		return -ENODEV;
 	}
 
-	if (dev_info->pwr_off_size > VIRTUAL_DEV_MAX_POWER_SIZE) {
+	if (pvd->pwr_off_size > VIRTUAL_DEV_MAX_POWER_SIZE) {
 		dev_err(dev, "%s power off function size too big %d!\n",
-		__func__, dev_info->pwr_off_size);
+		__func__, pvd->pwr_off_size);
 		return -ENODEV;
 	}
 
