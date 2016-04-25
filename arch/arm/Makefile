@@ -20,12 +20,17 @@ endif
 
 OBJCOPYFLAGS	:=-O binary -R .comment -S
 GZFLAGS		:=-9
-KBUILD_CFLAGS	+= -O2 -pipe
+KBUILD_CFLAGS	+= -pipe
+# Explicitly specifiy 32-bit ARM ISA since toolchain default can be -mthumb:
+KBUILD_CFLAGS	+=$(call cc-option,-marm,)
 
-O2_FLAGS := -fgraphite-identity -floop-block -floop-interchange -floop-parallelize-all -floop-strip-mine -ftree-loop-distribution
-O1_FLAGS := -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=2048 --param l1-cache-line-size=32 
+O2_FLAGS := -fgraphite-identity -floop-nest-optimize
 
-KBUILD_CFLAGS	+= -fno-pic $(O1_FLAGS) $(O2_FLAGS)
+O1_FLAGS := --param l1-cache-size=32 --param l2-cache-size=2048 --param l1-cache-line-size=32 
+
+KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
+KBUILD_CFLAGS	+= -fno-pic 
+KBUILD_CFLAGS	+= $(O1_FLAGS) $(O2_FLAGS)
 
 # Never generate .eh_frame
 KBUILD_CFLAGS	+= $(call cc-option,-fno-dwarf2-cfi-asm)
