@@ -768,15 +768,17 @@ void gk20a_fifo_reset_engine(struct gk20a *g, u32 engine_id)
 	gk20a_dbg_fn("");
 
 	if (engine_id == top_device_info_type_enum_graphics_v()) {
-		if (support_gk20a_pmu(g->dev) && g->elpg_enabled)
+		if (support_gk20a_pmu(g->dev) && g->elpg_enabled) {
 			gk20a_pmu_disable_elpg(g);
 			/*HALT_PIPELINE method, halt GR engine*/
-			if (gr_gk20a_halt_pipe(g))
+			}
+			if (gr_gk20a_halt_pipe(g)) {
 				gk20a_err(dev_from_gk20a(g),
 					"failed to HALT gr pipe");
 			/* resetting engine using mc_enable_r() is not
 			enough, we do full init sequence */
 			gk20a_gr_reset(g);
+			}
 	}
 	if (engine_id == top_device_info_type_enum_copy0_v())
 		gk20a_reset(g, mc_enable_ce2_m());
