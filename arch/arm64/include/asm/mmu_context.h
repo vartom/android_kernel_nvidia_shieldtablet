@@ -30,6 +30,8 @@
 
 #define MAX_ASID_BITS	16
 
+extern unsigned int max_asid_bits;
+
 extern unsigned int cpu_last_asid;
 
 void __init_new_context(struct task_struct *tsk, struct mm_struct *mm);

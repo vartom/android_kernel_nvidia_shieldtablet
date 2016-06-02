@@ -55,9 +55,11 @@
 #include <asm/tlbflush.h>
 #include <asm/traps.h>
 #include <asm/memblock.h>
+#include <asm/mmu_context.h>
 #include <asm/psci.h>
 
 #include <asm/mach/arch.h>
+#include <asm/system_misc.h>
 
 unsigned int processor_id;
 EXPORT_SYMBOL(processor_id);
@@ -76,6 +78,7 @@ unsigned int compat_elf_hwcap __read_mostly = COMPAT_ELF_HWCAP_DEFAULT;
 unsigned int compat_elf_hwcap2 __read_mostly;
 #endif
 
+static const char *cpu_name;
 static const char *machine_name;
 
 unsigned int system_rev;
@@ -216,6 +219,7 @@ void cpuinfo_store_cpu(void)
 static void __init setup_processor(void)
 {
 	struct cpu_info *cpu_info;
+	u64 reg_value;
 	u64 features, block;
 
 	cpu_info = lookup_processor_type(read_cpuid_id());
@@ -225,14 +229,23 @@ static void __init setup_processor(void)
 		while (1);
 	}
 
+	cpu_name = cpu_info->cpu_name;
+
 	pr_info("CPU: %s [%08x] revision %d\n",
-	       cpu_info->cpu_name, read_cpuid_id(), read_cpuid_id() & 15);
+	       cpu_name, read_cpuid_id(), read_cpuid_id() & 15);
 
 	sprintf(init_utsname()->machine, ELF_PLATFORM);
 	elf_hwcap = 0;
 
-	cpuinfo_store_boot_cpu();
-
+	/* Read the number of ASID bits */
+	reg_value = read_cpuid(ID_AA64MMFR0_EL1) & 0xf0;
+	if (reg_value == 0x00)
+		max_asid_bits = 8;
+	else if (reg_value == 0x20)
+		max_asid_bits = 16;
+	else
+		BUG_ON(1);
+	cpu_last_asid = 1 << max_asid_bits;
 	/*
 	 * ID_AA64ISAR0_EL1 contains 4-bit wide signed feature blocks.
 	 * The blocks we test below represent incremental functionality
@@ -545,6 +558,9 @@ static void denver_show(struct seq_file *m)
 {
 	u32 aidr;
 
+	seq_printf(m, "Processor\t: %s rev %d (%s)\n",
+		   cpu_name, read_cpuid_id() & 15, ELF_PLATFORM);
+	seq_printf(m, "Hardware\t: %s\n", machine_name);
 	asm volatile("mrs %0, AIDR_EL1" : "=r" (aidr) : );
 	seq_printf(m, "MTS version\t: %u\n", aidr);
 }
@@ -589,7 +605,7 @@ static int c_show(struct seq_file *m, void *v)
 {
 	int i, j;
 
-	for_each_online_cpu(i) {
+	for_each_present_cpu(i) {
 		struct cpuinfo_arm64 *cpuinfo = &per_cpu(cpu_data, i);
 		u32 midr = cpuinfo->reg_midr;
 

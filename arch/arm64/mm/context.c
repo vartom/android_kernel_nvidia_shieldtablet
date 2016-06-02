@@ -34,6 +34,8 @@
 
 static DEFINE_RAW_SPINLOCK(cpu_asid_lock);
 unsigned int cpu_last_asid = ASID_FIRST_VERSION;
+unsigned int max_asid_bits;
+unsigned int cpu_last_asid;
 
 /*
  * We fork()ed a process, and we need a new context for the child to run in.
