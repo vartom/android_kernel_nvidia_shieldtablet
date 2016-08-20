@@ -144,6 +144,7 @@
 #else /* !CONFIG_ARM_LPAE */
 #define MAX_PHYSMEM_BITS	32
 #endif
+#endif
 
 /*
  * PLAT_PHYS_OFFSET is the offset (from zero) of the start of physical
