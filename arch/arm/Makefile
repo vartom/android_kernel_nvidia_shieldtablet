@@ -29,6 +29,21 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-dwarf2-cfi-asm)
 # Select a platform tht is kept up-to-date
 KBUILD_DEFCONFIG := versatile_defconfig
 
+O2_FLAGS := \
+	-ffast-math \
+	-fgraphite-identity \
+	-floop-nest-optimize
+
+O1_FLAGS := \
+	-mtune=cortex-a15 \
+	--param l1-cache-line-size=32 \
+	--param l1-cache-size=64 \
+	--param l2-cache-size=2097
+
+KBUILD_CFLAGS	+= -fno-pic -pipe
+KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
+KBUILD_CFLAGS	+= $(O2_FLAGS) $(O1_FLAGS)
+
 # defines filename extension depending memory management type.
 ifeq ($(CONFIG_MMU),)
 MMUEXT		:= -nommu
