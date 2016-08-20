@@ -1053,6 +1053,9 @@ static int acm_probe(struct usb_interface *intf,
 	if (quirks & NO_UNION_NORMAL) {
 		data_interface = usb_ifnum_to_if(usb_dev, 1);
 		control_interface = usb_ifnum_to_if(usb_dev, 0);
+		/* we would crash */
+		if (!data_interface || !control_interface)
+			return -ENODEV;
 		goto skip_normal_probe;
 	}
 
@@ -1825,6 +1828,11 @@ static const struct usb_device_id acm_ids[] = {
 	/* Icera 450 */
 	{ USB_DEVICE(0x1983, 0x0321),
 	.driver_info = NO_HANGUP_IN_RESET_RESUME,
+	},
+
+	/*Samsung phone in firmware update mode */
+	{ USB_DEVICE(0x04e8, 0x685d),
+	.driver_info = IGNORE_DEVICE,
 	},
 
 	/* control interfaces without any protocol set */
