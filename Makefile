@@ -373,9 +373,10 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks \
-		   -std=gnu89
+		   -fno-delete-null-pointer-checks -Wno-logical-not-parentheses \
+		   -Wno-misleading-indentation -Wno-unused-const-variable
 
+KBUILD_AFLAGS_KERNEL :=		
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
