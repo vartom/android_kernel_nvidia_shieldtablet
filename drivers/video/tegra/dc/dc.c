@@ -155,18 +155,6 @@ static struct device_dma_parameters tegra_dc_dma_parameters = {
 	.max_segment_size = UINT_MAX,
 };
 
-static const struct {
-	bool h;
-	bool v;
-} can_filter[] = {
-	/* Window A has no filtering */
-	{ false, false },
-	/* Window B has both H and V filtering */
-	{ true,  true  },
-	/* Window C has only H filtering */
-	{ false, true  },
-};
-
 #ifdef CONFIG_TEGRA_DC_CMU
 static struct tegra_dc_cmu default_cmu = {
 	/* lut1 maps sRGB to linear space. */
@@ -1062,6 +1050,13 @@ struct tegra_dc_out_info {
 	struct tegra_dc_mode mode;
 	int fblistindex;
 };
+
+#ifdef CONFIG_FB_TEGRA
+#else
+int tegra_fb_update_modelist(struct tegra_dc *dc, int fblistindex)
+{
+}
+#endif
 
 static struct tegra_dc_out_info dbg_dc_out_info[TEGRA_DC_OUT_MAX];
 /* array for saving the out_type for each head */
