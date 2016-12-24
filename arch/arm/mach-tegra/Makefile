@@ -18,10 +18,10 @@ GCOV_PROFILE_panel-s-edp-wqxgap-15-6.o := n
 GCOV_PROFILE_panel-s-wqxga-10-1.o := n
 GCOV_PROFILE_panel-s-wuxga-7-0.o := n
 GCOV_PROFILE_panel-s-wuxga-8-0.o := n
-
+GCOV_PROFILE_panel-j-qxga-8-9.o := n
 
 asflags-y				+= -march=armv7-a
-subdir-ccflags-y := -Werror
+#subdir-ccflags-y := -Werror
 subdir-ccflags-y += -I$(srctree)/drivers/platform/tegra/include
 
 obj-y                                   += devices.o
